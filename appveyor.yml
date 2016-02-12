@@ -20,7 +20,7 @@ build:
   verbosity: normal
 after_build:
 - cmd: >-
-    nuget pack Cinteros.Xrm.CRMWinForm.nuspec
+    nuget pack Cinteros.Xrm.CRMWinForm.nuspec -Version %APPVEYOR_BUILD_VERSION%
 
     7z a CRMWinForm_%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\CRMWinForm\bin\%CONFIGURATION%\Cinteros.Xrm.*.dll
 
