@@ -5,6 +5,7 @@ using System.Data;
 using System.Windows.Forms;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
+using System.Drawing;
 
 namespace Cinteros.Xrm.CRMWinForm
 {
@@ -16,6 +17,7 @@ namespace Cinteros.Xrm.CRMWinForm
         private bool showFriendlyNames = false;
         private bool showIdColumn = true;
         private bool showIndexColumn = true;
+        private bool entityReferenceClickable = false;
 
         public CRMGridView()
         {
@@ -27,9 +29,12 @@ namespace Cinteros.Xrm.CRMWinForm
             AllowUserToResizeRows = false;
             CellClick += HandleRecordClick;
             CellDoubleClick += HandleRecordDoubleClick;
+            CellMouseEnter += HandleCellMouseEnter;
+            CellMouseLeave += HandleCellMouseLeave;
         }
 
         [Category("Data")]
+        [DefaultValue(null)]
         public IOrganizationService OrganizationService
         {
             get { return organizationService; }
@@ -59,7 +64,8 @@ namespace Cinteros.Xrm.CRMWinForm
             }
         }
 
-        [Category("CRM")]
+        [Category("Data")]
+        [DefaultValue(true)]
         [Description("Specify if content shall be automatically refreshed when entitycollection, service, flags etc are changed.")]
         public bool AutoRefresh
         {
@@ -122,6 +128,15 @@ namespace Cinteros.Xrm.CRMWinForm
             }
         }
 
+        [Category("Appearance")]
+        [DefaultValue(false)]
+        [Description("Set this to give EntityReference cells a clickable appearance.")]
+        public bool EntityReferenceClickable
+        {
+            get { return entityReferenceClickable; }
+            set { entityReferenceClickable = value; }
+        }
+
         /// <summary>
         /// Refresh the contents of the gridview based on associated Entities and flags
         /// </summary>
@@ -145,14 +160,54 @@ namespace Cinteros.Xrm.CRMWinForm
 
         private void HandleRecordClick(object sender, DataGridViewCellEventArgs e)
         {
-            Entity entity = GetRecordFromCellEvent(e);
-            OnRecordClick(new CRMRecordEventArgs(entity));
+            OnRecordClick(GetCRMRecordEventArgs(e));
         }
 
         private void HandleRecordDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            Entity entity = GetRecordFromCellEvent(e);
-            OnRecordDoubleClick(new CRMRecordEventArgs(entity));
+            OnRecordDoubleClick(GetCRMRecordEventArgs(e));
+        }
+
+        private void HandleCellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (entityReferenceClickable)
+            {
+                if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                {
+                    return;
+                }
+                var entity = GetRecordFromCellEvent(e);
+                var row = Rows[e.RowIndex];
+                var col = Columns[e.ColumnIndex];
+                if (!entity.Contains(col.Name))
+                {
+                    return;
+                }
+                var value = entity[col.Name];
+                if (value is EntityReference)
+                {
+                    var font = new Font(Font, FontStyle.Underline);
+                    var cell = row.Cells[e.ColumnIndex];
+                    cell.Style.Font = font;
+                    Cursor = Cursors.Hand;
+                }
+            }
+        }
+
+        private void HandleCellMouseLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            if (entityReferenceClickable)
+            {
+                if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                {
+                    return;
+                }
+                var row = Rows[e.RowIndex];
+                var cell = row.Cells[e.ColumnIndex];
+                var font = new Font(Font, FontStyle.Regular);
+                cell.Style.Font = font;
+                Cursor = Cursors.Default;
+            }
         }
 
         protected virtual void OnRecordClick(CRMRecordEventArgs e)
@@ -171,6 +226,14 @@ namespace Cinteros.Xrm.CRMWinForm
             {
                 handler(this, e);
             }
+        }
+
+        private CRMRecordEventArgs GetCRMRecordEventArgs(DataGridViewCellEventArgs e)
+        {
+            Entity entity = GetRecordFromCellEvent(e);
+            var attribute = Columns[e.ColumnIndex].Name;
+            var args = new CRMRecordEventArgs(entity, attribute);
+            return args;
         }
 
         private Entity GetRecordFromCellEvent(DataGridViewCellEventArgs e)
