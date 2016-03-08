@@ -166,6 +166,12 @@ namespace Cinteros.Xrm.CRMWinForm
         [Category("CRM")]
         public event CRMRecordEventHandler RecordDoubleClick;
 
+        [Category("CRM")]
+        public event CRMRecordEventHandler RecordMouseEnter;
+
+        [Category("CRM")]
+        public event CRMRecordEventHandler RecordMouseLeave;
+
         private void HandleRecordClick(object sender, DataGridViewCellEventArgs e)
         {
             OnRecordClick(GetCRMRecordEventArgs(e));
@@ -203,6 +209,7 @@ namespace Cinteros.Xrm.CRMWinForm
                     Cursor = Cursors.Hand;
                 }
             }
+            OnRecordMouseEnter(GetCRMRecordEventArgs(e));
         }
 
         private void HandleCellMouseLeave(object sender, DataGridViewCellEventArgs e)
@@ -219,6 +226,7 @@ namespace Cinteros.Xrm.CRMWinForm
                 cell.Style.Font = font;
                 Cursor = Cursors.Default;
             }
+            OnRecordMouseLeave(GetCRMRecordEventArgs(e));
         }
 
         protected virtual void OnRecordClick(CRMRecordEventArgs e)
@@ -239,11 +247,29 @@ namespace Cinteros.Xrm.CRMWinForm
             }
         }
 
+        private void OnRecordMouseEnter(CRMRecordEventArgs e)
+        {
+            var handler = RecordMouseEnter;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        private void OnRecordMouseLeave(CRMRecordEventArgs e)
+        {
+            var handler = RecordMouseLeave;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
         private CRMRecordEventArgs GetCRMRecordEventArgs(DataGridViewCellEventArgs e)
         {
             Entity entity = GetRecordFromCellEvent(e);
             var attribute = e.ColumnIndex >= 0 ? Columns[e.ColumnIndex].Name : string.Empty;
-            var args = new CRMRecordEventArgs(entity, attribute);
+            var args = new CRMRecordEventArgs(e.ColumnIndex, e.RowIndex, entity, attribute);
             return args;
         }
 
@@ -441,7 +467,10 @@ namespace Cinteros.Xrm.CRMWinForm
                     col.Visible = false;
                 }
             }
-            AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCellsExceptHeader);
+            if (AutoSizeColumnsMode != DataGridViewAutoSizeColumnsMode.None && AutoSizeColumnsMode != DataGridViewAutoSizeColumnsMode.Fill)
+            {
+                AutoResizeColumns(AutoSizeColumnsMode);
+            }
             ResumeLayout();
         }
     }

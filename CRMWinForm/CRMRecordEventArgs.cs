@@ -1,18 +1,27 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
+using System.Windows.Forms;
 
 namespace Cinteros.Xrm.CRMWinForm
 {
     public class CRMRecordEventArgs : EventArgs
     {
+        private int columnIndex;
+        private int rowIndex;
         private Entity entity;
         private string attribute;
 
-        public CRMRecordEventArgs(Entity entity, string attribute)
+        public CRMRecordEventArgs(int columnIndex, int rowIndex, Entity entity, string attribute)
         {
+            this.columnIndex = columnIndex;
+            this.rowIndex = rowIndex;
             this.entity = entity;
             this.attribute = attribute;
         }
+
+        public int ColumnIndex { get { return columnIndex; } }
+
+        public int RowIndex { get { return rowIndex; } }
 
         public Entity Entity { get { return entity; } }
 
