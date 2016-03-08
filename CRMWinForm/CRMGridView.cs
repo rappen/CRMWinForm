@@ -220,11 +220,21 @@ namespace Cinteros.Xrm.CRMWinForm
                 {
                     return;
                 }
+                var entity = GetRecordFromCellEvent(e);
                 var row = Rows[e.RowIndex];
-                var cell = row.Cells[e.ColumnIndex];
-                var font = new Font(Font, FontStyle.Regular);
-                cell.Style.Font = font;
-                Cursor = Cursors.Default;
+                var col = Columns[e.ColumnIndex];
+                if (!entity.Contains(col.Name))
+                {
+                    return;
+                }
+                var value = entity[col.Name];
+                if (value is EntityReference)
+                {
+                    var font = new Font(Font, FontStyle.Regular);
+                    var cell = row.Cells[e.ColumnIndex];
+                    cell.Style.Font = font;
+                    Cursor = Cursors.Default;
+                }
             }
             OnRecordMouseLeave(GetCRMRecordEventArgs(e));
         }
