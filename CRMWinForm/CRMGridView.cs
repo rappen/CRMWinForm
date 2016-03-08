@@ -173,7 +173,10 @@ namespace Cinteros.Xrm.CRMWinForm
 
         private void HandleRecordDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            OnRecordDoubleClick(GetCRMRecordEventArgs(e));
+            if (e.ColumnIndex >= 0 && e.RowIndex >= 0)
+            {
+                OnRecordDoubleClick(GetCRMRecordEventArgs(e));
+            }
         }
 
         private void HandleCellMouseEnter(object sender, DataGridViewCellEventArgs e)
@@ -239,7 +242,7 @@ namespace Cinteros.Xrm.CRMWinForm
         private CRMRecordEventArgs GetCRMRecordEventArgs(DataGridViewCellEventArgs e)
         {
             Entity entity = GetRecordFromCellEvent(e);
-            var attribute = Columns[e.ColumnIndex].Name;
+            var attribute = e.ColumnIndex >= 0 ? Columns[e.ColumnIndex].Name : string.Empty;
             var args = new CRMRecordEventArgs(entity, attribute);
             return args;
         }
