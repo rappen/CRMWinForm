@@ -29,8 +29,10 @@ namespace Cinteros.Xrm.CRMWinForm
             AllowUserToDeleteRows = false;
             AllowUserToOrderColumns = true;
             AllowUserToResizeRows = false;
-            CellClick += HandleRecordClick;
-            CellDoubleClick += HandleRecordDoubleClick;
+            CellClick += HandleClick;
+            CellDoubleClick += HandleDoubleClick;
+            CellEnter += HandleCellEnter;
+            CellLeave += HandleCellLeave;
             CellMouseEnter += HandleCellMouseEnter;
             CellMouseLeave += HandleCellMouseLeave;
         }
@@ -167,22 +169,38 @@ namespace Cinteros.Xrm.CRMWinForm
         public event CRMRecordEventHandler RecordDoubleClick;
 
         [Category("CRM")]
+        public event CRMRecordEventHandler RecordEnter;
+
+        [Category("CRM")]
+        public event CRMRecordEventHandler RecordLeave;
+
+        [Category("CRM")]
         public event CRMRecordEventHandler RecordMouseEnter;
 
         [Category("CRM")]
         public event CRMRecordEventHandler RecordMouseLeave;
 
-        private void HandleRecordClick(object sender, DataGridViewCellEventArgs e)
+        private void HandleClick(object sender, DataGridViewCellEventArgs e)
         {
-            OnRecordClick(GetCRMRecordEventArgs(e));
+            OnRecordEvent(GetCRMRecordEventArgs(e), RecordClick);
         }
 
-        private void HandleRecordDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void HandleDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex >= 0 && e.RowIndex >= 0)
             {
-                OnRecordDoubleClick(GetCRMRecordEventArgs(e));
+                OnRecordEvent(GetCRMRecordEventArgs(e), RecordDoubleClick);
             }
+        }
+
+        private void HandleCellEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            OnRecordEvent(GetCRMRecordEventArgs(e), RecordEnter);
+        }
+
+        private void HandleCellLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            OnRecordEvent(GetCRMRecordEventArgs(e), RecordLeave);
         }
 
         private void HandleCellMouseEnter(object sender, DataGridViewCellEventArgs e)
@@ -209,7 +227,7 @@ namespace Cinteros.Xrm.CRMWinForm
                     Cursor = Cursors.Hand;
                 }
             }
-            OnRecordMouseEnter(GetCRMRecordEventArgs(e));
+            OnRecordEvent(GetCRMRecordEventArgs(e), RecordMouseEnter);
         }
 
         private void HandleCellMouseLeave(object sender, DataGridViewCellEventArgs e)
@@ -236,39 +254,12 @@ namespace Cinteros.Xrm.CRMWinForm
                     Cursor = Cursors.Default;
                 }
             }
-            OnRecordMouseLeave(GetCRMRecordEventArgs(e));
+            OnRecordEvent(GetCRMRecordEventArgs(e), RecordMouseLeave);
         }
 
-        protected virtual void OnRecordClick(CRMRecordEventArgs e)
+        private void OnRecordEvent(CRMRecordEventArgs e, CRMRecordEventHandler RecordEventHandler)
         {
-            var handler = RecordClick;
-            if (handler != null)
-            {
-                handler(this, e);
-            }
-        }
-
-        protected virtual void OnRecordDoubleClick(CRMRecordEventArgs e)
-        {
-            var handler = RecordDoubleClick;
-            if (handler != null)
-            {
-                handler(this, e);
-            }
-        }
-
-        private void OnRecordMouseEnter(CRMRecordEventArgs e)
-        {
-            var handler = RecordMouseEnter;
-            if (handler != null)
-            {
-                handler(this, e);
-            }
-        }
-
-        private void OnRecordMouseLeave(CRMRecordEventArgs e)
-        {
-            var handler = RecordMouseLeave;
+            var handler = RecordEventHandler;
             if (handler != null)
             {
                 handler(this, e);
