@@ -18,6 +18,8 @@ namespace Cinteros.Xrm.CRMWinForm
         private bool showIdColumn = true;
         private bool showIndexColumn = true;
         private bool entityReferenceClickable = false;
+        private bool designedColumnsDetermined = false;
+        private bool designedColumns = false;
 
         public CRMGridView()
         {
@@ -52,7 +54,14 @@ namespace Cinteros.Xrm.CRMWinForm
         [Description("Indicates the source of data (EntityCollection) for the CRMGridView control.")]
         public new object DataSource
         {
-            get { return base.DataSource; }
+            get
+            {
+                if (entityCollection != null)
+                {
+                    return entityCollection;
+                }
+                return base.DataSource;
+            }
             set
             {
                 base.DataSource = value;
@@ -80,7 +89,7 @@ namespace Cinteros.Xrm.CRMWinForm
             }
         }
 
-        [Category("Appearance")]
+        [Category("CRM")]
         [DefaultValue(false)]
         [Description("True to show friendly names, False to show logical names and guid etc.")]
         public bool ShowFriendlyNames
@@ -96,7 +105,7 @@ namespace Cinteros.Xrm.CRMWinForm
             }
         }
 
-        [Category("Appearance")]
+        [Category("CRM")]
         [DefaultValue(true)]
         [Description("Set this to show the id of each record first in the grid.")]
         public bool ShowIdColumn
@@ -112,7 +121,7 @@ namespace Cinteros.Xrm.CRMWinForm
             }
         }
 
-        [Category("Appearance")]
+        [Category("CRM")]
         [DefaultValue(true)]
         [Description("Set this to display a counter column first in the grid.")]
         public bool ShowIndexColumn
@@ -128,7 +137,7 @@ namespace Cinteros.Xrm.CRMWinForm
             }
         }
 
-        [Category("Appearance")]
+        [Category("CRM")]
         [DefaultValue(false)]
         [Description("Set this to give EntityReference cells a clickable appearance.")]
         public bool EntityReferenceClickable
@@ -142,7 +151,6 @@ namespace Cinteros.Xrm.CRMWinForm
         /// </summary>
         public override void Refresh()
         {
-            Columns.Clear();
             if (entityCollection != null)
             {
                 var cols = GetTableColumns(entityCollection);
@@ -251,8 +259,48 @@ namespace Cinteros.Xrm.CRMWinForm
         private List<DataColumn> GetTableColumns(EntityCollection entities)
         {
             var columns = new List<DataColumn>();
-            columns.Add(new DataColumn("#no", typeof(int)) { Caption = "#", AutoIncrement = true, AutoIncrementSeed = 1 });
-            columns.Add(new DataColumn("#id", typeof(Guid)) { Caption = "Id" });
+            if (!designedColumnsDetermined)
+            {
+                designedColumns = Columns.Count > 0;
+                designedColumnsDetermined = true;
+            }
+            if (designedColumns)
+            {
+                PopulateColumnsFromDesign(entities, columns);
+            }
+            else
+            {
+                Columns.Clear();
+                columns.Add(new DataColumn("#no", typeof(int)) { Caption = "#", AutoIncrement = true, AutoIncrementSeed = 1 });
+                columns.Add(new DataColumn("#id", typeof(Guid)) { Caption = "Id" });
+                PopulateColumnsFromEntities(entities, columns);
+            }
+            columns.Add(new DataColumn("#entity", typeof(Entity)));
+            return columns;
+        }
+
+        private void PopulateColumnsFromDesign(EntityCollection entities, List<DataColumn> columns)
+        {
+            foreach (DataGridViewColumn viewcol in Columns)
+            {
+                if (string.IsNullOrEmpty(viewcol.DataPropertyName))
+                {
+                    viewcol.DataPropertyName = viewcol.Name;
+                }
+                var attribute = viewcol.DataPropertyName;
+                var value = GetFirstValueForAttribute(entities, attribute);
+                var type = !showFriendlyNames && value != null ? value.GetType() : typeof(string);
+                var dataColumn = new DataColumn(attribute, type);
+                dataColumn.Caption = viewcol.HeaderText;
+                var meta = MetadataHelper.GetAttribute(organizationService, entities.EntityName, attribute);
+                dataColumn.ExtendedProperties.Add("Metadata", meta);
+                dataColumn.ExtendedProperties.Add("OriginalType", value != null ? value.GetType() : null);
+                columns.Add(dataColumn);
+            }
+        }
+
+        private void PopulateColumnsFromEntities(EntityCollection entities, List<DataColumn> columns)
+        {
             var addedColumns = new List<string>();
             foreach (var entity in entities.Entities)
             {
@@ -275,7 +323,6 @@ namespace Cinteros.Xrm.CRMWinForm
                     var value = EntitySerializer.AttributeToBaseType(entity[attribute]);
                     var type = showFriendlyNames ? typeof(string) : value.GetType();
                     var dataColumn = new DataColumn(attribute, type);
-                    dataColumn.ColumnName = attribute;
                     dataColumn.Caption =
                         showFriendlyNames &&
                         meta != null &&
@@ -287,8 +334,18 @@ namespace Cinteros.Xrm.CRMWinForm
                     addedColumns.Add(attribute);
                 }
             }
-            columns.Add(new DataColumn("#entity", typeof(Entity)));
-            return columns;
+        }
+
+        private object GetFirstValueForAttribute(EntityCollection entities, string attribute)
+        {
+            foreach (var entity in entities.Entities)
+            {
+                if (entity.Contains(attribute) && entity[attribute] != null)
+                {
+                    return entity[attribute];
+                }
+            }
+            return null;
         }
 
         private DataTable GetDataTable(EntityCollection entities, List<DataColumn> columns)
@@ -357,7 +414,7 @@ namespace Cinteros.Xrm.CRMWinForm
             base.DataSource = dTable;
             foreach (DataGridViewColumn col in Columns)
             {
-                var datacolumn = dTable.Columns[col.Name];
+                var datacolumn = dTable.Columns[col.DataPropertyName];
                 col.HeaderText = datacolumn.Caption;
                 var type = datacolumn.DataType;
                 if (datacolumn.ExtendedProperties.ContainsKey("OriginalType"))
