@@ -11,6 +11,7 @@ namespace Cinteros.Xrm.CRMWinForm
 {
     public partial class CRMGridView : DataGridView
     {
+        #region Private properties
         private IOrganizationService organizationService;
         private EntityCollection entityCollection;
         private bool autoRefresh = true;
@@ -20,7 +21,9 @@ namespace Cinteros.Xrm.CRMWinForm
         private bool entityReferenceClickable = false;
         private bool designedColumnsDetermined = false;
         private bool designedColumns = false;
+        #endregion
 
+        #region Constructor
         public CRMGridView()
         {
             InitializeComponent();
@@ -36,7 +39,9 @@ namespace Cinteros.Xrm.CRMWinForm
             CellMouseEnter += HandleCellMouseEnter;
             CellMouseLeave += HandleCellMouseLeave;
         }
+        #endregion
 
+        #region Published properties
         [Category("Data")]
         [DefaultValue(null)]
         public IOrganizationService OrganizationService
@@ -147,21 +152,9 @@ namespace Cinteros.Xrm.CRMWinForm
             get { return entityReferenceClickable; }
             set { entityReferenceClickable = value; }
         }
+        #endregion
 
-        /// <summary>
-        /// Refresh the contents of the gridview based on associated Entities and flags
-        /// </summary>
-        public override void Refresh()
-        {
-            if (entityCollection != null)
-            {
-                var cols = GetTableColumns(entityCollection);
-                var data = GetDataTable(entityCollection, cols);
-                BindData(data);
-            }
-            base.Refresh();
-        }
-
+        #region Published events
         [Category("CRM")]
         public event CRMRecordEventHandler RecordClick;
 
@@ -179,7 +172,25 @@ namespace Cinteros.Xrm.CRMWinForm
 
         [Category("CRM")]
         public event CRMRecordEventHandler RecordMouseLeave;
+        #endregion
 
+        #region Public properties
+        /// <summary>
+        /// Refresh the contents of the gridview based on associated Entities and flags
+        /// </summary>
+        public override void Refresh()
+        {
+            if (entityCollection != null)
+            {
+                var cols = GetTableColumns(entityCollection);
+                var data = GetDataTable(entityCollection, cols);
+                BindData(data);
+            }
+            base.Refresh();
+        }
+        #endregion
+
+        #region Private event handler methods
         private void HandleClick(object sender, DataGridViewCellEventArgs e)
         {
             OnRecordEvent(GetCRMRecordEventArgs(e), RecordClick);
@@ -265,7 +276,9 @@ namespace Cinteros.Xrm.CRMWinForm
                 handler(this, e);
             }
         }
+        #endregion
 
+        #region Private methods
         private CRMRecordEventArgs GetCRMRecordEventArgs(DataGridViewCellEventArgs e)
         {
             Entity entity = GetRecordFromCellEvent(e);
@@ -474,6 +487,7 @@ namespace Cinteros.Xrm.CRMWinForm
             }
             ResumeLayout();
         }
+        #endregion
     }
 
     public delegate void CRMRecordEventHandler(object sender, CRMRecordEventArgs e);
