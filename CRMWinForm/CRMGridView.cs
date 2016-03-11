@@ -174,6 +174,62 @@ namespace Cinteros.Xrm.CRMWinForm
         public event CRMRecordEventHandler RecordMouseLeave;
         #endregion
 
+        #region Public properties
+        /// <summary>
+        /// EntityCollection representing currently selected rows
+        /// </summary>
+        public EntityCollection SelectedRowRecords
+        {
+            get
+            {
+                if (entityCollection == null)
+                {
+                    return null;
+                }
+                var result = new EntityCollection();
+                result.EntityName = entityCollection.EntityName;
+                foreach (DataGridViewRow row in SelectedRows)
+                {
+                    var entity = row.Cells["#entity"].Value as Entity;
+                    if (entity != null)
+                    {
+                        result.Entities.Add(entity);
+                    }
+                }
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// EntityCollection representing all currently selected cells
+        /// </summary>
+        public EntityCollection SelectedCellRecords
+        {
+            get
+            {
+                if (entityCollection == null)
+                {
+                    return null;
+                }
+                var result = new EntityCollection();
+                result.EntityName = entityCollection.EntityName;
+                foreach (DataGridViewCell cell in SelectedCells)
+                {
+                    if (cell.RowIndex >= 0 && cell.RowIndex < Rows.Count)
+                    {
+                        var row = Rows[cell.RowIndex];
+                        var entity = row.Cells["#entity"].Value as Entity;
+                        if (entity != null && !result.Entities.Contains(entity))
+                        {
+                            result.Entities.Add(entity);
+                        }
+                    }
+                }
+                return result;
+            }
+        }
+        #endregion
+        
         #region Public methods
         /// <summary>
         /// Gets the DataSource object as requested type.
