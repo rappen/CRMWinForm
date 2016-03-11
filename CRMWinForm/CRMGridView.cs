@@ -174,7 +174,22 @@ namespace Cinteros.Xrm.CRMWinForm
         public event CRMRecordEventHandler RecordMouseLeave;
         #endregion
 
-        #region Public properties
+        #region Public methods
+        /// <summary>
+        /// Gets the DataSource object as requested type.
+        /// For the CRMGridView the primary expected types T are EntityCollection or DataTable.
+        /// </summary>
+        /// <typeparam name="T">Type of the DataSource to return.</typeparam>
+        /// <returns>DataSource of type T if available, otherwise null.</returns>
+        public T GetDataSource<T>()
+        {
+            if (typeof(T) == typeof(EntityCollection))
+            {
+                return (T)(object)entityCollection;
+            }
+            return (T)base.DataSource;
+        }
+
         /// <summary>
         /// Refresh the contents of the gridview based on associated Entities and flags
         /// </summary>
