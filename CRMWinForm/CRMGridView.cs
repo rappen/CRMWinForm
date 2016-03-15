@@ -23,6 +23,8 @@ namespace Cinteros.Xrm.CRMWinForm
 
         public CRMGridView()
         {
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+
             InitializeComponent();
             ReadOnly = true;
             AllowUserToAddRows = false;
