@@ -231,7 +231,7 @@ namespace Cinteros.Xrm.CRMWinForm
             }
         }
         #endregion
-        
+
         #region Public methods
         /// <summary>
         /// Gets the DataSource object as requested type.
@@ -434,11 +434,15 @@ namespace Cinteros.Xrm.CRMWinForm
                     {
                         continue;
                     }
-
-                    var meta = MetadataHelper.GetAttribute(organizationService, entities.EntityName, attribute);
                     var value = EntitySerializer.AttributeToBaseType(entity[attribute]);
+                    if (value == null)
+                    {
+                        continue;
+                    }
+
                     var type = showFriendlyNames ? typeof(string) : value.GetType();
                     var dataColumn = new DataColumn(attribute, type);
+                    var meta = MetadataHelper.GetAttribute(organizationService, entities.EntityName, attribute);
                     dataColumn.Caption =
                         showFriendlyNames &&
                         meta != null &&
