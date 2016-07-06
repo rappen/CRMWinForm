@@ -4,13 +4,13 @@
         <id>Cinteros.Xrm.CRMWinForm</id>
         <version>2016.1.2</version>
         <title>Cinteros Xrm CRMWinForm</title>
-        <authors>Jonas Rapp - Cinteros AB</authors>
-        <owners>Cinteros</owners>
-        <iconUrl>http://rappen.net/Cinteros/cinteros.ico</iconUrl>
+        <authors>Jonas Rapp, Innofactor AB</authors>
+        <owners>Innofactor</owners>
+        <iconUrl>http://rappen.net/Cinteros/innofactor.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Development Utilities WinForm CRM projects.</description>
         <summary>Primary content is the CRMGridView user control inheriting DataGridView to use Microsoft.Xrm.Sdk.EntityCollection as a DataSource.</summary>
-        <copyright>Cinteros AB</copyright>
+        <copyright>Innofactor AB</copyright>
         <language>es-US</language>
         <tags>MSDynCRM WinForm EntityCollection DataGridView CRMGridView</tags>
         <dependencies>
