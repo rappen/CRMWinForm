@@ -9,7 +9,7 @@ namespace Cinteros.Xrm.CRMWinForm
 {
     public class EntitySerializer
     {
-        public static XmlDocument Serialize(Entity entity, XmlNode parent)
+        public static XmlDocument Serialize(Entity entity, XmlNode parent, SerializationStyle style)
         {
             XmlDocument result;
             if (parent != null)
@@ -22,23 +22,14 @@ namespace Cinteros.Xrm.CRMWinForm
                 parent = result.CreateElement("Entities");
                 result.AppendChild(parent);
             }
-            XmlNode xEntity = result.CreateElement("Entity");
-            XmlAttribute xEntityName = result.CreateAttribute("name");
-            xEntityName.Value = entity.LogicalName;
-            xEntity.Attributes.Append(xEntityName);
-            XmlAttribute xEntityId = result.CreateAttribute("id");
-            xEntityId.Value = entity.Id.ToString();
-            xEntity.Attributes.Append(xEntityId);
+            XmlNode xEntity = GetEntityNode(entity, result, style);
             foreach (KeyValuePair<string, object> attribute in entity.Attributes)
             {
                 if (attribute.Key == entity.LogicalName + "id")
                 {   // Don't include PK
                     continue;
                 }
-                XmlNode xAttribute = result.CreateNode(XmlNodeType.Element, "Attribute", "");
-                XmlAttribute xName = result.CreateAttribute("name");
-                xName.Value = attribute.Key;
-                xAttribute.Attributes.Append(xName);
+                XmlNode xAttribute = GetAttributeNode(result, attribute, style);
                 object value = attribute.Value;
                 if (value is AliasedValue)
                 {
@@ -64,6 +55,12 @@ namespace Cinteros.Xrm.CRMWinForm
                     XmlAttribute xRefEntity = result.CreateAttribute("entity");
                     xRefEntity.Value = ((EntityReference)value).LogicalName;
                     xAttribute.Attributes.Append(xRefEntity);
+                    if (!string.IsNullOrEmpty(((EntityReference)value).Name))
+                    {
+                        XmlAttribute xRefValue = result.CreateAttribute("value");
+                        xRefValue.Value = ((EntityReference)value).Name;
+                        xAttribute.Attributes.Append(xRefValue);
+                    }
                 }
                 object basetypevalue = AttributeToBaseType(value);
                 if (basetypevalue != null)
@@ -75,6 +72,51 @@ namespace Cinteros.Xrm.CRMWinForm
             }
             parent.AppendChild(xEntity);
             return result;
+        }
+
+        private static XmlNode GetEntityNode(Entity entity, XmlDocument result, SerializationStyle style)
+        {
+            switch (style)
+            {
+                case SerializationStyle.Basic:
+                    {
+                        XmlNode xEntity = result.CreateElement("Entity");
+                        XmlAttribute xEntityName = result.CreateAttribute("name");
+                        xEntityName.Value = entity.LogicalName;
+                        xEntity.Attributes.Append(xEntityName);
+                        XmlAttribute xEntityId = result.CreateAttribute("id");
+                        xEntityId.Value = entity.Id.ToString();
+                        xEntity.Attributes.Append(xEntityId);
+                        return xEntity;
+                    }
+                case SerializationStyle.Explicit:
+                    {
+                        XmlNode xEntity = result.CreateElement(entity.LogicalName);
+                        XmlAttribute xEntityId = result.CreateAttribute("id");
+                        xEntityId.Value = entity.Id.ToString();
+                        xEntity.Attributes.Append(xEntityId);
+                        return xEntity;
+                    }
+                default:
+                    return null;
+            }
+        }
+
+        private static XmlNode GetAttributeNode(XmlDocument result, KeyValuePair<string, object> attribute, SerializationStyle style)
+        {
+            switch (style)
+            {
+                case SerializationStyle.Basic:
+                    XmlNode xAttribute = result.CreateNode(XmlNodeType.Element, "Attribute", "");
+                    XmlAttribute xName = result.CreateAttribute("name");
+                    xName.Value = attribute.Key;
+                    xAttribute.Attributes.Append(xName);
+                    return xAttribute;
+                case SerializationStyle.Explicit:
+                    return result.CreateNode(XmlNodeType.Element, attribute.Key, "");
+                default:
+                    return null;
+            }
         }
 
         public static string ToJSON(Entity entity, Formatting format, int indent)

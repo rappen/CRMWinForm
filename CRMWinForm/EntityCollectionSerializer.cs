@@ -7,7 +7,7 @@ namespace Cinteros.Xrm.CRMWinForm
 {
     public class EntityCollectionSerializer
     {
-        public static XmlDocument Serialize(EntityCollection collection)
+        public static XmlDocument Serialize(EntityCollection collection, SerializationStyle style = SerializationStyle.Basic)
         {
             var result = new XmlDocument();
             XmlNode root = result.CreateNode(XmlNodeType.Element, "Entities", "");
@@ -25,7 +25,7 @@ namespace Cinteros.Xrm.CRMWinForm
             root.Attributes.Append(paging);
             foreach (var entity in collection.Entities)
             {
-                EntitySerializer.Serialize(entity, root);
+                EntitySerializer.Serialize(entity, root, style);
             }
             result.AppendChild(root);
             return result;

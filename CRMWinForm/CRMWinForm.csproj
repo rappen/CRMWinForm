@@ -73,6 +73,7 @@
     <Compile Include="EntitySerializer.cs" />
     <Compile Include="MetadataHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SerializationStyle.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
