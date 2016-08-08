@@ -20,7 +20,8 @@ namespace Cinteros.Xrm.CRMWinForm
         private bool showIndexColumn = true;
         private bool entityReferenceClickable = false;
         private bool designedColumnsDetermined = false;
-        private bool designedColumns = false;
+        private bool designedColumnsUsed = false;
+        private DataGridViewColumn[] designedColumns;
         #endregion
 
         #region Constructor
@@ -75,6 +76,16 @@ namespace Cinteros.Xrm.CRMWinForm
             {
                 base.DataSource = value;
                 entityCollection = value as EntityCollection;
+                if (designedColumnsDetermined && designedColumnsUsed && designedColumns != null)
+                {
+                    foreach (DataGridViewColumn col in designedColumns)
+                    {
+                        if (!Columns.Contains(col.Name))
+                        {
+                            Columns.Add(col);
+                        }
+                    }
+                }
                 if (entityCollection != null && autoRefresh)
                 {
                     Refresh();
@@ -377,10 +388,15 @@ namespace Cinteros.Xrm.CRMWinForm
             var columns = new List<DataColumn>();
             if (!designedColumnsDetermined)
             {
-                designedColumns = Columns.Count > 0;
+                designedColumnsUsed = Columns.Count > 0;
                 designedColumnsDetermined = true;
+                if (designedColumnsUsed)
+                {
+                    designedColumns = new DataGridViewColumn[Columns.Count];
+                    Columns.CopyTo(designedColumns, 0);
+                }
             }
-            if (designedColumns)
+            if (designedColumnsUsed)
             {
                 PopulateColumnsFromDesign(entities, columns);
             }
