@@ -74,6 +74,8 @@ namespace Cinteros.Xrm.CRMWinForm
             }
             set
             {
+                designedColumns = new DataGridViewColumn[Columns.Count];
+                Columns.CopyTo(designedColumns, 0);
                 base.DataSource = value;
                 entityCollection = value as EntityCollection;
                 if (designedColumnsDetermined && designedColumnsUsed && designedColumns != null)
@@ -82,6 +84,7 @@ namespace Cinteros.Xrm.CRMWinForm
                     {
                         if (!Columns.Contains(col.Name))
                         {
+                            col.DisplayIndex = Columns.Count;
                             Columns.Add(col);
                         }
                     }
@@ -415,6 +418,10 @@ namespace Cinteros.Xrm.CRMWinForm
         {
             foreach (DataGridViewColumn viewcol in Columns)
             {
+                if (viewcol.Name == "#entity")
+                {
+                    continue;
+                }
                 if (string.IsNullOrEmpty(viewcol.DataPropertyName))
                 {
                     viewcol.DataPropertyName = viewcol.Name;
