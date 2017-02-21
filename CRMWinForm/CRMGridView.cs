@@ -424,7 +424,7 @@ namespace Cinteros.Xrm.CRMWinForm
                 var type = !showFriendlyNames && value != null ? value.GetType() : typeof(string);
                 var dataColumn = new DataColumn(attribute, type);
                 dataColumn.Caption = viewcol.HeaderText;
-                var meta = MetadataHelper.GetAttribute(organizationService, entities.EntityName, attribute);
+                var meta = MetadataHelper.GetAttribute(organizationService, entities.EntityName, attribute, value);
                 dataColumn.ExtendedProperties.Add("Metadata", meta);
                 dataColumn.ExtendedProperties.Add("OriginalType", value != null ? value.GetType() : null);
                 columns.Add(dataColumn);
@@ -458,7 +458,7 @@ namespace Cinteros.Xrm.CRMWinForm
 
                     var type = showFriendlyNames ? typeof(string) : value.GetType();
                     var dataColumn = new DataColumn(attribute, type);
-                    var meta = MetadataHelper.GetAttribute(organizationService, entities.EntityName, attribute);
+                    var meta = MetadataHelper.GetAttribute(organizationService, entities.EntityName, attribute, entity[attribute]);
                     dataColumn.Caption =
                         showFriendlyNames &&
                         meta != null &&

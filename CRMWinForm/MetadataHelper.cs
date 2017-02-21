@@ -15,9 +15,19 @@ namespace Cinteros.Xrm.CRMWinForm
         public static String[] entityDetails = { "Attributes", "ManyToOneRelationships", "OneToManyRelationships", "ManyToManyRelationships", "SchemaName" };
         public static String[] attributeProperties = { "DisplayName", "AttributeType", "IsValidForRead", "AttributeOf", "IsManaged", "IsCustomizable", "IsCustomAttribute", "IsValidForAdvancedFind", "IsPrimaryId", "OptionSet", "SchemaName" };
 
+        public static AttributeMetadata GetAttribute(IOrganizationService service, string entity, string attribute, object value)
+        {
+            if (value is AliasedValue)
+            {
+                var aliasedValue = value as AliasedValue;
+                entity = aliasedValue.EntityLogicalName;
+                attribute = aliasedValue.AttributeLogicalName;
+            }
+            return GetAttribute(service, entity, attribute);
+        }
+
         public static AttributeMetadata GetAttribute(IOrganizationService service, string entity, string attribute)
         {
-            // TODO: If AliasedValue, look up actual entity and attribute name to return correct metadata
             if (!entities.ContainsKey(entity))
             {
                 var response = LoadEntityDetails(service, entity);
