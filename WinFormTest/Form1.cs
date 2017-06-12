@@ -42,13 +42,19 @@ namespace WinFormTest
         private void button2_Click(object sender, EventArgs e)
         {
             var qex = new QueryExpression("account");
-            qex.ColumnSet.AddColumns("name", "accountnumber", "primarycontactid", "accountratingcode");
-            crmGridView1.DataSource = crmGridView1.OrganizationService.RetrieveMultiple(qex);
+            qex.ColumnSet.AddColumns("name", "accountnumber", "primarycontactid", "accountratingcode", "numberofemployees", "revenue", "creditlimit");
+            var pc = qex.AddLink("contact", "primarycontactid", "contactid", JoinOperator.LeftOuter);
+            pc.Columns.AddColumn("emailaddress1");
+            pc.EntityAlias = "C";
+            var ec= crmGridView1.OrganizationService.RetrieveMultiple(qex);
+            crmGridView1.DataSource = ec;
+            crmGridView2.DataSource = ec;
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             crmGridView1.ShowFriendlyNames = checkBox1.Checked;
+            crmGridView2.ShowFriendlyNames = checkBox1.Checked;
         }
 
         private void crmGridView1_RecordClick(object sender, CRMRecordEventArgs e)

@@ -34,8 +34,14 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.crmGridView1 = new Cinteros.Xrm.CRMWinForm.CRMGridView();
+            this.crmGridView2 = new Cinteros.Xrm.CRMWinForm.CRMGridView();
+            this.splitter1 = new System.Windows.Forms.Splitter();
+            this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.revenue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.pcemail = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.crmGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.crmGridView2)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -108,11 +114,60 @@
             this.crmGridView1.TabIndex = 1;
             this.crmGridView1.RecordClick += new Cinteros.Xrm.CRMWinForm.CRMRecordEventHandler(this.crmGridView1_RecordClick);
             // 
+            // crmGridView2
+            // 
+            this.crmGridView2.AllowUserToAddRows = false;
+            this.crmGridView2.AllowUserToDeleteRows = false;
+            this.crmGridView2.AllowUserToOrderColumns = true;
+            this.crmGridView2.AllowUserToResizeRows = false;
+            this.crmGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.crmGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.name,
+            this.revenue,
+            this.pcemail});
+            this.crmGridView2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.crmGridView2.Location = new System.Drawing.Point(0, 296);
+            this.crmGridView2.Name = "crmGridView2";
+            this.crmGridView2.ReadOnly = true;
+            this.crmGridView2.Size = new System.Drawing.Size(869, 136);
+            this.crmGridView2.TabIndex = 2;
+            // 
+            // splitter1
+            // 
+            this.splitter1.Cursor = System.Windows.Forms.Cursors.HSplit;
+            this.splitter1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.splitter1.Location = new System.Drawing.Point(0, 293);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(869, 3);
+            this.splitter1.TabIndex = 3;
+            this.splitter1.TabStop = false;
+            // 
+            // name
+            // 
+            this.name.HeaderText = "Company";
+            this.name.Name = "name";
+            this.name.ReadOnly = true;
+            // 
+            // revenue
+            // 
+            this.revenue.HeaderText = "Revenue";
+            this.revenue.Name = "revenue";
+            this.revenue.ReadOnly = true;
+            // 
+            // pcemail
+            // 
+            this.pcemail.DataPropertyName = "C.emailaddress1";
+            this.pcemail.HeaderText = "PC Email";
+            this.pcemail.Name = "pcemail";
+            this.pcemail.ReadOnly = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(869, 432);
+            this.Controls.Add(this.splitter1);
+            this.Controls.Add(this.crmGridView2);
             this.Controls.Add(this.crmGridView1);
             this.Controls.Add(this.panel1);
             this.Name = "Form1";
@@ -120,6 +175,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.crmGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.crmGridView2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -132,6 +188,11 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox checkBox2;
+        private Cinteros.Xrm.CRMWinForm.CRMGridView crmGridView2;
+        private System.Windows.Forms.Splitter splitter1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn name;
+        private System.Windows.Forms.DataGridViewTextBoxColumn revenue;
+        private System.Windows.Forms.DataGridViewTextBoxColumn pcemail;
     }
 }
 
