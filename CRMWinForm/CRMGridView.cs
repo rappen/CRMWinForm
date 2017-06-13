@@ -453,7 +453,7 @@ namespace Cinteros.Xrm.CRMWinForm
 
         private bool ValueTypeIsFriendly(object value)
         {
-            return value is Int32 || value is decimal || value is string || value is Money;
+            return value is Int32 || value is decimal || value is double || value is string || value is Money;
         }
 
         private void PopulateColumnsFromEntities(EntityCollection entities, List<DataColumn> columns)
@@ -582,7 +582,7 @@ namespace Cinteros.Xrm.CRMWinForm
                 {
                     type = datacolumn.ExtendedProperties["OriginalType"] as Type;
                 }
-                if (type == typeof(int) || type == typeof(decimal) || type == typeof(Money))
+                if (type == typeof(int) || type == typeof(decimal) || type == typeof(double) || type == typeof(Money))
                 {
                     col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
                 }
