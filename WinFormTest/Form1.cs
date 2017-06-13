@@ -46,9 +46,28 @@ namespace WinFormTest
             var pc = qex.AddLink("contact", "primarycontactid", "contactid", JoinOperator.LeftOuter);
             pc.Columns.AddColumn("emailaddress1");
             pc.EntityAlias = "C";
-            var ec= crmGridView1.OrganizationService.RetrieveMultiple(qex);
+            var ec = crmGridView1.OrganizationService.RetrieveMultiple(qex);
+            CalcSomeValue(ec);
             crmGridView1.DataSource = ec;
             crmGridView2.DataSource = ec;
+        }
+
+        private static void CalcSomeValue(EntityCollection ec)
+        {
+            var b = false;
+            foreach (var ent in ec.Entities)
+            {
+                var calc = ent.Contains("revenue") ? ((Money)ent["revenue"]).Value : 0;
+                if (b)
+                {
+                    ent["calc"] = (int)(calc * DateTime.Now.Minute);
+                }
+                else
+                {
+                    ent["calc"] = (double)(calc / DateTime.Now.Minute);
+                }
+                b = !b;
+            }
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)

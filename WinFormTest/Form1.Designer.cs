@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
@@ -38,7 +40,9 @@
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.revenue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.primarycontactid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pcemail = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.calc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.crmGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.crmGridView2)).BeginInit();
@@ -53,7 +57,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(869, 100);
+            this.panel1.Size = new System.Drawing.Size(964, 100);
             this.panel1.TabIndex = 0;
             // 
             // checkBox2
@@ -110,7 +114,7 @@
             this.crmGridView1.Location = new System.Drawing.Point(0, 100);
             this.crmGridView1.Name = "crmGridView1";
             this.crmGridView1.ReadOnly = true;
-            this.crmGridView1.Size = new System.Drawing.Size(869, 332);
+            this.crmGridView1.Size = new System.Drawing.Size(964, 511);
             this.crmGridView1.TabIndex = 1;
             this.crmGridView1.RecordClick += new Cinteros.Xrm.CRMWinForm.CRMRecordEventHandler(this.crmGridView1_RecordClick);
             // 
@@ -124,21 +128,24 @@
             this.crmGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.name,
             this.revenue,
-            this.pcemail});
+            this.primarycontactid,
+            this.pcemail,
+            this.calc});
             this.crmGridView2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.crmGridView2.Location = new System.Drawing.Point(0, 296);
+            this.crmGridView2.EnableHeadersVisualStyles = false;
+            this.crmGridView2.Location = new System.Drawing.Point(0, 352);
             this.crmGridView2.Name = "crmGridView2";
             this.crmGridView2.ReadOnly = true;
-            this.crmGridView2.Size = new System.Drawing.Size(869, 136);
+            this.crmGridView2.Size = new System.Drawing.Size(964, 259);
             this.crmGridView2.TabIndex = 2;
             // 
             // splitter1
             // 
             this.splitter1.Cursor = System.Windows.Forms.Cursors.HSplit;
             this.splitter1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.splitter1.Location = new System.Drawing.Point(0, 293);
+            this.splitter1.Location = new System.Drawing.Point(0, 349);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(869, 3);
+            this.splitter1.Size = new System.Drawing.Size(964, 3);
             this.splitter1.TabIndex = 3;
             this.splitter1.TabStop = false;
             // 
@@ -150,9 +157,18 @@
             // 
             // revenue
             // 
+            dataGridViewCellStyle3.Format = "N3";
+            dataGridViewCellStyle3.NullValue = null;
+            this.revenue.DefaultCellStyle = dataGridViewCellStyle3;
             this.revenue.HeaderText = "Revenue";
             this.revenue.Name = "revenue";
             this.revenue.ReadOnly = true;
+            // 
+            // primarycontactid
+            // 
+            this.primarycontactid.HeaderText = "Contact";
+            this.primarycontactid.Name = "primarycontactid";
+            this.primarycontactid.ReadOnly = true;
             // 
             // pcemail
             // 
@@ -161,11 +177,20 @@
             this.pcemail.Name = "pcemail";
             this.pcemail.ReadOnly = true;
             // 
+            // calc
+            // 
+            dataGridViewCellStyle4.Format = "N2";
+            dataGridViewCellStyle4.NullValue = null;
+            this.calc.DefaultCellStyle = dataGridViewCellStyle4;
+            this.calc.HeaderText = "Some Calculated Field";
+            this.calc.Name = "calc";
+            this.calc.ReadOnly = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(869, 432);
+            this.ClientSize = new System.Drawing.Size(964, 611);
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.crmGridView2);
             this.Controls.Add(this.crmGridView1);
@@ -192,7 +217,9 @@
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.DataGridViewTextBoxColumn name;
         private System.Windows.Forms.DataGridViewTextBoxColumn revenue;
+        private System.Windows.Forms.DataGridViewTextBoxColumn primarycontactid;
         private System.Windows.Forms.DataGridViewTextBoxColumn pcemail;
+        private System.Windows.Forms.DataGridViewTextBoxColumn calc;
     }
 }
 
