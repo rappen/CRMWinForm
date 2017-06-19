@@ -2,6 +2,7 @@
 using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Xml;
 
@@ -9,6 +10,8 @@ namespace Cinteros.Xrm.CRMWinForm
 {
     public class EntitySerializer
     {
+        private static string guidtemplate = "FFFFEEEEDDDDCCCCBBBBAAAA99998888";
+
         public static XmlDocument Serialize(Entity entity, XmlNode parent, SerializationStyle style)
         {
             XmlDocument result;
@@ -71,6 +74,47 @@ namespace Cinteros.Xrm.CRMWinForm
                 xEntity.AppendChild(xAttribute);
             }
             parent.AppendChild(xEntity);
+            return result;
+        }
+
+        public static Entity Deserialize(XmlNode xEntity)
+        {
+            Entity result;
+            string name = xEntity.Name == "Entity" ? GetXmlAttribute(xEntity, "name") : xEntity.Name;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new XmlException("Cannot deserialize entity, missing entity name");
+            }
+            string strId = GetXmlAttribute(xEntity, "id");
+            Guid id = StringToGuidish(strId);
+            if (!id.Equals(Guid.Empty))
+            {
+                result = new Entity(name, id);
+            }
+            else
+            {
+                result = new Entity(name);
+            }
+            foreach (XmlNode xAttribute in xEntity.ChildNodes)
+            {
+                if (xAttribute.NodeType == XmlNodeType.Element)
+                {
+                    string attribute = xAttribute.Name == "Attribute" ? GetXmlAttribute(xAttribute, "name") : xAttribute.Name;
+                    string type = GetXmlAttribute(xAttribute, "type");
+                    string value = xAttribute.ChildNodes.Count > 0 ? xAttribute.ChildNodes[0].InnerText : "";
+                    if (type == "EntityReference")
+                    {
+                        string entity = GetXmlAttribute(xAttribute, "entity");
+                        value = entity + ":" + value;
+                        var entrefname = GetXmlAttribute(xAttribute, "value");
+                        if (!string.IsNullOrEmpty(entrefname))
+                        {
+                            value += ":" + entrefname;
+                        }
+                    }
+                    result[attribute] = GetProperty(type, value);
+                }
+            }
             return result;
         }
 
@@ -332,6 +376,135 @@ namespace Cinteros.Xrm.CRMWinForm
                 return "";
             }
             return "\n" + new string(' ', indent * 4);
+        }
+
+        private static object GetProperty(string type, string value)
+        {
+            switch (type)
+            {
+                case "String":
+                case "Memo":
+                    return value;
+                case "Int32":
+                case "Integer":
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        return Int32.Parse(value);
+                    }
+                    break;
+                case "Int64":
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        return Int64.Parse(value);
+                    }
+                    break;
+                case "OptionSetValue":
+                case "Picklist":
+                case "State":
+                case "Status":
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        return new OptionSetValue(int.Parse(value));
+                    }
+                    break;
+                case "EntityReference":
+                case "Lookup":
+                case "Customer":
+                case "Owner":
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        var valueparts = value.Split(':');
+                        string entity = valueparts[0];
+                        value = valueparts[1];
+                        Guid refId = StringToGuidish(value);
+                        var entref = new EntityReference(entity, refId);
+                        if (valueparts.Length > 2)
+                        {
+                            entref.Name = valueparts[2];
+                        }
+                        return entref;
+                    }
+                    break;
+                case "DateTime":
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        return DateTime.Parse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                    }
+                    break;
+                case "Boolean":
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        return StringToBool(value);
+                    }
+                    break;
+                case "Guid":
+                case "Uniqueidentifier":
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        Guid uId = StringToGuidish(value);
+                        return uId;
+                    }
+                    break;
+                case "Decimal":
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        return decimal.Parse(value);
+                    }
+                    break;
+                case "Money":
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        return new Money(decimal.Parse(value));
+                    }
+                    break;
+                case "null":
+                    return null;
+                default:
+                    throw new ArgumentOutOfRangeException("Type", type, "Cannot parse attibute type");
+            }
+
+            return null;
+        }
+
+        private static Guid StringToGuidish(string strId)
+        {
+            Guid id = Guid.Empty;
+            if (!string.IsNullOrWhiteSpace(strId) &&
+                !Guid.TryParse(strId, out id))
+            {
+                string template = guidtemplate;
+                Guid.TryParse(template.Substring(0, 32 - strId.Length) + strId, out id);
+            }
+            return id;
+        }
+
+        private static bool StringToBool(string value)
+        {
+            if (value == "0")
+            {
+                return false;
+            }
+            else if (value == "1")
+            {
+                return true;
+            }
+            else
+            {
+                return bool.Parse(value);
+            }
+        }
+
+        public static string GetXmlAttribute(XmlNode node, string attribute)
+        {
+            XmlAttribute xAtt = node.Attributes[attribute];
+            if (xAtt != null)
+            {
+                return xAtt.Value;
+            }
+            else
+            {
+                return "";
+            }
         }
     }
 }
