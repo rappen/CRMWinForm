@@ -18,6 +18,7 @@ namespace Cinteros.Xrm.CRMWinForm
         private bool showFriendlyNames = false;
         private bool showIdColumn = true;
         private bool showIndexColumn = true;
+        private bool showLocalTimes = false;
         private bool entityReferenceClickable = false;
         private bool designedColumnsDetermined = false;
         private bool designedColumnsUsed = false;
@@ -104,10 +105,32 @@ namespace Cinteros.Xrm.CRMWinForm
             get { return autoRefresh; }
             set
             {
-                autoRefresh = value;
-                if (autoRefresh)
+                if (value != autoRefresh)
                 {
-                    Refresh();
+                    autoRefresh = value;
+                    if (autoRefresh)
+                    {
+                        Refresh();
+                    }
+                }
+            }
+        }
+
+        [Category("CRM")]
+        [DefaultValue(false)]
+        [Description("True to show timestamps in local time, false to show UTC. Only valid when ShowFriendlyNames is true.")]
+        public bool ShowLocalTimes
+        {
+            get { return showLocalTimes; }
+            set
+            {
+                if (value != showLocalTimes)
+                {
+                    showLocalTimes = value && showFriendlyNames;
+                    if (autoRefresh)
+                    {
+                        Refresh();
+                    }
                 }
             }
         }
@@ -120,10 +143,17 @@ namespace Cinteros.Xrm.CRMWinForm
             get { return showFriendlyNames; }
             set
             {
-                showFriendlyNames = value;
-                if (autoRefresh)
+                if (value != showFriendlyNames)
                 {
-                    Refresh();
+                    showFriendlyNames = value;
+                    if (!showFriendlyNames)
+                    {
+                        showLocalTimes = false;
+                    }
+                    if (autoRefresh)
+                    {
+                        Refresh();
+                    }
                 }
             }
         }
@@ -136,10 +166,13 @@ namespace Cinteros.Xrm.CRMWinForm
             get { return showIdColumn; }
             set
             {
-                showIdColumn = value;
-                if (autoRefresh)
+                if (value != ShowIdColumn)
                 {
-                    Refresh();
+                    showIdColumn = value;
+                    if (autoRefresh)
+                    {
+                        Refresh();
+                    }
                 }
             }
         }
@@ -152,10 +185,13 @@ namespace Cinteros.Xrm.CRMWinForm
             get { return showIndexColumn; }
             set
             {
-                showIndexColumn = value;
-                if (autoRefresh)
+                if (value != showIndexColumn)
                 {
-                    Refresh();
+                    showIndexColumn = value;
+                    if (autoRefresh)
+                    {
+                        Refresh();
+                    }
                 }
             }
         }
@@ -539,6 +575,10 @@ namespace Cinteros.Xrm.CRMWinForm
                             value = entity[col];
                             if (showFriendlyNames)
                             {
+                                if (value is DateTime && showLocalTimes && ((DateTime)value).Kind == DateTimeKind.Utc)
+                                {
+                                    value = ((DateTime)value).ToLocalTime();
+                                }
                                 if (!ValueTypeIsFriendly(value) && column.ExtendedProperties.ContainsKey("Metadata"))
                                 {
                                     value = EntitySerializer.AttributeToString(value, column.ExtendedProperties["Metadata"] as AttributeMetadata);
