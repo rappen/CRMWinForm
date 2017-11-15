@@ -14,7 +14,7 @@
         <language>es-US</language>
         <tags>MSDynCRM WinForm EntityCollection DataGridView CRMGridView</tags>
         <dependencies>
-            <dependency id="Microsoft.CrmSdk.CoreAssemblies" version="8.0.1"/>
+            <dependency id="Microsoft.CrmSdk.CoreAssemblies" version="9.0.0"/>
         </dependencies>
     </metadata>
     <files>
