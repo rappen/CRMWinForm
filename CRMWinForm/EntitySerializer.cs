@@ -300,7 +300,7 @@ namespace Cinteros.Xrm.CRMWinForm
             else if (attribute is OptionSetValue)
                 return ((OptionSetValue)attribute).Value;
             else if (attribute is OptionSetValueCollection)
-                return string.Join(";", ((OptionSetValueCollection)attribute).Select(v => v.Value.ToString()));
+                return "[" + string.Join(",", ((OptionSetValueCollection)attribute).Select(v => v.Value.ToString())) + "]";
             else if (attribute is Money)
                 return ((Money)attribute).Value;
             else if (attribute is BooleanManagedProperty)
@@ -357,7 +357,7 @@ namespace Cinteros.Xrm.CRMWinForm
             else if (attribute is OptionSetValueCollection)
             {
                 var values = ((OptionSetValueCollection)attribute);
-                return string.Join(", ", values.Select(v => GetOptionSetLabel(meta, v.Value)));
+                return string.Join("; ", values.Select(v => GetOptionSetLabel(meta, v.Value)));
             }
             else if (attribute is Money)
                 return ((Money)attribute).Value.ToString();
