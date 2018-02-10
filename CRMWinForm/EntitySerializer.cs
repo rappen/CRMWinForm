@@ -3,6 +3,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -298,6 +299,8 @@ namespace Cinteros.Xrm.CRMWinForm
             }
             else if (attribute is OptionSetValue)
                 return ((OptionSetValue)attribute).Value;
+            else if (attribute is OptionSetValueCollection)
+                return string.Join(";", ((OptionSetValueCollection)attribute).Select(v => v.Value.ToString()));
             else if (attribute is Money)
                 return ((Money)attribute).Value;
             else if (attribute is BooleanManagedProperty)
@@ -349,17 +352,12 @@ namespace Cinteros.Xrm.CRMWinForm
             else if (attribute is OptionSetValue)
             {
                 var value = ((OptionSetValue)attribute).Value;
-                if (meta != null && meta is EnumAttributeMetadata)
-                {
-                    foreach (var osv in ((EnumAttributeMetadata)meta).OptionSet.Options)
-                    {
-                        if (osv.Value == value)
-                        {
-                            return osv.Label.UserLocalizedLabel.Label;
-                        }
-                    }
-                }
-                return value.ToString();
+                return GetOptionSetLabel(meta, value);
+            }
+            else if (attribute is OptionSetValueCollection)
+            {
+                var values = ((OptionSetValueCollection)attribute);
+                return string.Join(", ", values.Select(v => GetOptionSetLabel(meta, v.Value)));
             }
             else if (attribute is Money)
                 return ((Money)attribute).Value.ToString();
@@ -367,6 +365,21 @@ namespace Cinteros.Xrm.CRMWinForm
                 return ((BooleanManagedProperty)attribute).Value.ToString();
             else
                 return attribute.ToString();
+        }
+
+        private static string GetOptionSetLabel(AttributeMetadata meta, int value)
+        {
+            if (meta != null && meta is EnumAttributeMetadata)
+            {
+                foreach (var osv in ((EnumAttributeMetadata)meta).OptionSet.Options)
+                {
+                    if (osv.Value == value)
+                    {
+                        return osv.Label.UserLocalizedLabel.Label;
+                    }
+                }
+            }
+            return value.ToString();
         }
 
         internal static string Sep(Formatting format, int indent)
