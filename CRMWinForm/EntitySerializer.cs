@@ -312,20 +312,27 @@ namespace Cinteros.Xrm.CRMWinForm
         public static string AttributeToString(object attribute, AttributeMetadata meta)
         {
             if (attribute == null)
+            {
                 return "";
-            if (attribute is AliasedValue)
-                return AttributeToString(((AliasedValue)attribute).Value, meta);
-            else if (attribute is EntityReference)
-                if (!string.IsNullOrEmpty(((EntityReference)attribute).Name))
-                    return ((EntityReference)attribute).Name;
-                else
-                    return ((EntityReference)attribute).Id.ToString();
-            else if (attribute is EntityCollection && ((EntityCollection)attribute).EntityName == "activityparty")
+            }
+            if (attribute is AliasedValue aliasedValue)
+            {
+                return AttributeToString(aliasedValue.Value, meta);
+            }
+            else if (attribute is EntityReference entityReference)
+            {
+                if (!string.IsNullOrEmpty(entityReference.Name))
+                {
+                    return entityReference.Name;
+                }
+                return entityReference.Id.ToString();
+            }
+            else if (attribute is EntityCollection entityCollection && entityCollection.EntityName == "activityparty")
             {
                 var result = "";
-                if (((EntityCollection)attribute).Entities.Count > 0)
+                if (entityCollection.Entities.Count > 0)
                 {
-                    foreach (var entity in ((EntityCollection)attribute).Entities)
+                    foreach (var entity in entityCollection.Entities)
                     {
                         var party = "";
                         if (entity.Contains("partyid") && entity["partyid"] is EntityReference)
@@ -349,22 +356,27 @@ namespace Cinteros.Xrm.CRMWinForm
                 }
                 return result;
             }
-            else if (attribute is OptionSetValue)
+            else if (attribute is OptionSetValue optionSetValue)
             {
-                var value = ((OptionSetValue)attribute).Value;
-                return GetOptionSetLabel(meta, value);
+                return GetOptionSetLabel(meta, optionSetValue.Value);
             }
-            else if (attribute is OptionSetValueCollection)
+            else if (attribute is OptionSetValueCollection optionSetValues)
             {
-                var values = ((OptionSetValueCollection)attribute);
-                return string.Join("; ", values.Select(v => GetOptionSetLabel(meta, v.Value)));
+                return string.Join("; ", optionSetValues.Select(v => GetOptionSetLabel(meta, v.Value)));
             }
-            else if (attribute is Money)
-                return ((Money)attribute).Value.ToString();
-            else if (attribute is BooleanManagedProperty)
-                return ((BooleanManagedProperty)attribute).Value.ToString();
-            else
-                return attribute.ToString();
+            else if (attribute is Money money)
+            {
+                return money.Value.ToString();
+            }
+            else if (attribute is BooleanManagedProperty booleanManagedProperty)
+            {
+                return booleanManagedProperty.Value.ToString();
+            }
+            else if (attribute is bool boolValue)
+            {
+                return (GetBooleanLabel(meta, boolValue));
+            }
+            return attribute.ToString();
         }
 
         private static string GetOptionSetLabel(AttributeMetadata meta, int value)
@@ -377,6 +389,22 @@ namespace Cinteros.Xrm.CRMWinForm
                     {
                         return osv.Label.UserLocalizedLabel.Label;
                     }
+                }
+            }
+            return value.ToString();
+        }
+
+        private static string GetBooleanLabel(AttributeMetadata meta, bool value)
+        {
+            if (meta is BooleanAttributeMetadata bmeta)
+            {
+                if (value)
+                {
+                    return bmeta.OptionSet.TrueOption.Label.UserLocalizedLabel.Label;
+                }
+                else
+                {
+                    return bmeta.OptionSet.FalseOption.Label.UserLocalizedLabel.Label;
                 }
             }
             return value.ToString();
