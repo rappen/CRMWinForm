@@ -1,23 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
-    <metadata>
-        <id>Cinteros.Xrm.CRMWinForm</id>
-        <version>2016.1.2</version>
-        <title>Cinteros Xrm CRMWinForm</title>
-        <authors>Jonas Rapp, Innofactor Sweden</authors>
-        <owners>Innofactor</owners>
-        <iconUrl>http://rappen.net/Cinteros/innofactor.png</iconUrl>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Development Utilities WinForm CRM projects.</description>
-        <summary>Primary content is the CRMGridView user control inheriting DataGridView to use Microsoft.Xrm.Sdk.EntityCollection as a DataSource.</summary>
-        <copyright>Innofactor AB</copyright>
-        <language>es-US</language>
-        <tags>MSDynCRM WinForm EntityCollection DataGridView CRMGridView</tags>
-        <dependencies>
-            <dependency id="Microsoft.CrmSdk.CoreAssemblies" version="9.0.0"/>
-        </dependencies>
-    </metadata>
-    <files>
-        <file src="CRMWinForm\bin\Release\Cinteros.Xrm.CRMWinForm.dll" target="lib\net452\Cinteros.Xrm.CRMWinForm.dll" />
-    </files>
+  <metadata>
+    <id>Cinteros.Xrm.CRMWinForm</id>
+    <version>2016.1.2</version>
+    <title>Cinteros Xrm CRMWinForm</title>
+    <authors>Jonas Rapp, Innofactor Sweden</authors>
+    <owners>rappen</owners>
+    <iconUrl>http://rappen.net/Cinteros/innofactor.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Development Utilities WinForm CRM projects.</description>
+    <summary>Primary content is the CRMGridView user control inheriting DataGridView to use Microsoft.Xrm.Sdk.EntityCollection as a DataSource.</summary>
+    <releaseNotes>
+* #4 Display values for Multi Select Option Sets
+* #5 Display labels for Two Option Set values
+    </releaseNotes>
+    <copyright>Innofactor AB</copyright>
+    <language>es-US</language>
+    <tags>MSDynCRM WinForm EntityCollection DataGridView CRMGridView</tags>
+    <dependencies>
+      <dependency id="Microsoft.CrmSdk.CoreAssemblies" version="9.0.0"/>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="CRMWinForm\bin\Release\Cinteros.Xrm.CRMWinForm.dll" target="lib\net452\Cinteros.Xrm.CRMWinForm.dll" />
+  </files>
 </package>
