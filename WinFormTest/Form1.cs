@@ -31,10 +31,10 @@ namespace WinFormTest
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var cs = new ConnectionSelector(false, true);
+            var cs = new ConnectionSelector();
             if (cs.ShowDialog(this) == DialogResult.OK)
             {
-                var conn = cs.SelectedConnections.First();
+                var conn = cs.SelectedConnections;
                 ConnectionManager.Instance.ConnectToServer(conn, null);
             }
         }
