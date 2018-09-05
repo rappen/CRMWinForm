@@ -3,18 +3,18 @@
   <metadata>
     <id>Cinteros.Xrm.CRMWinForm</id>
     <version>2016.1.2</version>
-    <title>Cinteros Xrm CRMWinForm</title>
-    <authors>Jonas Rapp, Innofactor Sweden</authors>
+    <title>CRMWinForm</title>
+    <authors>Jonas Rapp, Sweden</authors>
     <owners>rappen</owners>
-    <iconUrl>http://rappen.net/Cinteros/innofactor.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/rappen/JonasPluginBase/master/images/J365-150.jpg</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Development Utilities WinForm CRM projects.</description>
     <summary>Primary content is the CRMGridView user control inheriting DataGridView to use Microsoft.Xrm.Sdk.EntityCollection as a DataSource.</summary>
     <releaseNotes>
-* #4 Display values for Multi Select Option Sets
-* #5 Display labels for Two Option Set values
+* #9 Adding Quick Filter feature
+* #8 Exception when null value and non-friendly view
     </releaseNotes>
-    <copyright>Innofactor AB</copyright>
+    <copyright>Jonas Rapp</copyright>
     <language>es-US</language>
     <tags>MSDynCRM WinForm EntityCollection DataGridView CRMGridView</tags>
     <dependencies>
