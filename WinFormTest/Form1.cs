@@ -90,5 +90,15 @@ namespace WinFormTest
         {
             crmGridView1.EntityReferenceClickable = checkBox2.Checked;
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            crmGridView1.AutoRefresh = false;
+            crmGridView1.FilterColumns = textBox1.Text;
+            crmGridView1.FilterText = textBox2.Text;
+            textBox1.Text = crmGridView1.FilterColumns;
+            textBox2.Text = crmGridView1.FilterText;
+            crmGridView1.AutoRefresh = true;
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using System.Drawing;
+using System.Linq;
 
 namespace Cinteros.Xrm.CRMWinForm
 {
@@ -22,6 +23,8 @@ namespace Cinteros.Xrm.CRMWinForm
         private bool entityReferenceClickable = false;
         private bool designedColumnsDetermined = false;
         private bool designedColumnsUsed = false;
+        private List<string> filterColumns = null;
+        private string filterText = null;
         private DataGridViewColumn[] designedColumns;
         #endregion
 
@@ -112,6 +115,39 @@ namespace Cinteros.Xrm.CRMWinForm
                     {
                         Refresh();
                     }
+                }
+            }
+        }
+
+        [Category("Data")]
+        [DefaultValue(null)]
+        [Description("Columns to investigate when filtering rows with FilterText. Enter datacolumn name separated by comma.")]
+        public string FilterColumns
+        {
+            get => filterColumns == null ? string.Empty : string.Join(", ", filterColumns);
+            set
+            {
+                filterColumns = string.IsNullOrWhiteSpace(value) ? null :
+                    value.ToLowerInvariant().Split(',').Select(c => c.Trim()).Where(c => !string.IsNullOrEmpty(c)).ToList();
+                if (autoRefresh)
+                {
+                    Refresh();
+                }
+            }
+        }
+
+        [Category("Data")]
+        [DefaultValue(null)]
+        [Description("Text to search for in FilterColumns to filter visible rows in the grid.")]
+        public string FilterText
+        {
+            get => filterText;
+            set
+            {
+                filterText = value.ToLowerInvariant();
+                if (autoRefresh)
+                {
+                    Refresh();
                 }
             }
         }
@@ -549,6 +585,8 @@ namespace Cinteros.Xrm.CRMWinForm
         {
             var dTable = new DataTable();
             dTable.Columns.AddRange(columns.ToArray());
+            var filteredcols = columns.Cast<DataColumn>().Where(c => filterColumns == null || filterColumns.Contains(c.ColumnName.ToLowerInvariant())).ToList();
+
             foreach (var entity in entities.Entities)
             {
                 var dRow = dTable.NewRow();
@@ -604,9 +642,29 @@ namespace Cinteros.Xrm.CRMWinForm
                         MessageBox.Show("Attribute " + col + " failed, value: " + entity[col].ToString());
                     }
                 }
-                dTable.Rows.Add(dRow);
+                if (FilterIncludeRow(dRow, filteredcols))
+                {
+                    dTable.Rows.Add(dRow);
+                }
             }
             return dTable;
+        }
+
+        private bool FilterIncludeRow(DataRow dRow, List<DataColumn> filtercolumns)
+        {
+            if (string.IsNullOrEmpty(filterText))
+            {
+                return true;
+            }
+            foreach (var column in filtercolumns)
+            {
+                var cellvalue = dRow[column];
+                if (cellvalue.ToString().ToLowerInvariant().Contains(filterText))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void BindData(DataTable dTable)
