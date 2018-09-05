@@ -27,6 +27,7 @@ namespace WinFormTest
         {
             crmGridView1.OrganizationService = e.OrganizationService;
             button2.Enabled = crmGridView1.OrganizationService != null;
+            button4.Enabled = crmGridView1.OrganizationService != null;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -99,6 +100,22 @@ namespace WinFormTest
             textBox1.Text = crmGridView1.FilterColumns;
             textBox2.Text = crmGridView1.FilterText;
             crmGridView1.AutoRefresh = true;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            var fetch = @"<fetch top='50' aggregate='true' >
+  <entity name='opportunity' >
+    <attribute name='estimatedvalue' alias='Total' aggregate='sum' />
+    <order alias='Total' />
+    <link-entity name='account' from='accountid' to='customerid' >
+      <attribute name='name' alias='acname' groupby='true' />
+    </link-entity>
+  </entity>
+</fetch>";
+            var ec = crmGridView1.OrganizationService.RetrieveMultiple(new FetchExpression(fetch));
+            crmGridView1.DataSource = ec;
+            crmGridView2.DataSource = ec;
         }
     }
 }

@@ -520,7 +520,12 @@ namespace Cinteros.Xrm.CRMWinForm
             {
                 return typeof(string);
             }
-            return EntitySerializer.AttributeToBaseType(value).GetType();
+            var basevalue = EntitySerializer.AttributeToBaseType(value);
+            if (basevalue == null)
+            {
+                return typeof(string);
+            }
+            return basevalue.GetType();
         }
 
         private bool ValueTypeIsFriendly(object value)
