@@ -12,6 +12,7 @@
     <summary>Primary content is the CRMGridView user control inheriting DataGridView to use Microsoft.Xrm.Sdk.EntityCollection as a DataSource.</summary>
     <releaseNotes>
 Added metadata properties LogicalCollectionName, PrimaryIdAttribute, Targets
+- Thanks @MarkMpn Mark Carrington for the contribution!
     </releaseNotes>
     <copyright>Jonas Rapp</copyright>
     <language>es-US</language>
