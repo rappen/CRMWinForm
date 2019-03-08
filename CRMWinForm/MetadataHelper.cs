@@ -12,7 +12,7 @@ namespace Cinteros.Xrm.CRMWinForm
         private static Dictionary<string, EntityMetadata> entities = new Dictionary<string, EntityMetadata>();
 
         public static String[] entityProperties = { "LogicalName", "DisplayName", "ObjectTypeCode", "IsManaged", "IsCustomizable", "IsCustomEntity", "IsIntersect", "IsValidForAdvancedFind" };
-        public static String[] entityDetails = { "Attributes", "ManyToOneRelationships", "OneToManyRelationships", "ManyToManyRelationships", "SchemaName" };
+        public static String[] entityDetails = { "Attributes", "ManyToOneRelationships", "OneToManyRelationships", "ManyToManyRelationships", "SchemaName", "LogicalCollectionName" };
         public static String[] attributeProperties = { "DisplayName", "AttributeType", "IsValidForRead", "AttributeOf", "IsManaged", "IsCustomizable", "IsCustomAttribute", "IsValidForAdvancedFind", "IsPrimaryId", "OptionSet", "SchemaName" };
 
         public static AttributeMetadata GetAttribute(IOrganizationService service, string entity, string attribute, object value)
