@@ -94,7 +94,7 @@ namespace Cinteros.Xrm.CRMWinForm
         private static string[] GetEntityDetailsForVersion(int orgMajorVer, int orgMinorVer)
         {
             var result = entityDetails.ToList();
-            if (orgMajorVer > 0 && orgMajorVer < 8)
+            if (orgMajorVer < 8)
             {
                 result.Remove("LogicalCollectionName");
             }
