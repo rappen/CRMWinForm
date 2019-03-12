@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using Microsoft.Xrm.Sdk.Messages;
+using System.Linq;
 
 namespace Cinteros.Xrm.CRMWinForm
 {
@@ -68,7 +69,7 @@ namespace Cinteros.Xrm.CRMWinForm
             return service.Execute(req) as RetrieveMetadataChangesResponse;
         }
 
-        public static RetrieveMetadataChangesResponse LoadEntityDetails(IOrganizationService service, string entityName)
+        public static RetrieveMetadataChangesResponse LoadEntityDetails(IOrganizationService service, string entityName, int orgMajorVer = 0, int orgMinorVer = 0)
         {
             if (service == null)
             {
@@ -76,7 +77,8 @@ namespace Cinteros.Xrm.CRMWinForm
             }
             var eqe = new EntityQueryExpression();
             eqe.Properties = new MetadataPropertiesExpression(entityProperties);
-            eqe.Properties.PropertyNames.AddRange(entityDetails);
+            string[] details = GetEntityDetailsForVersion(orgMajorVer, orgMinorVer);
+            eqe.Properties.PropertyNames.AddRange(details);
             eqe.Criteria.Conditions.Add(new MetadataConditionExpression("LogicalName", MetadataConditionOperator.Equals, entityName));
             var aqe = new AttributeQueryExpression();
             aqe.Properties = new MetadataPropertiesExpression(attributeProperties);
@@ -87,6 +89,16 @@ namespace Cinteros.Xrm.CRMWinForm
                 ClientVersionStamp = null
             };
             return service.Execute(req) as RetrieveMetadataChangesResponse;
+        }
+
+        private static string[] GetEntityDetailsForVersion(int orgMajorVer, int orgMinorVer)
+        {
+            var result = entityDetails.ToList();
+            if (orgMajorVer > 0 && orgMajorVer < 8)
+            {
+                result.Remove("LogicalCollectionName");
+            }
+            return result.ToArray();
         }
     }
 }

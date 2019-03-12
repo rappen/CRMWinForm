@@ -11,8 +11,7 @@
     <description>Development Utilities WinForm CRM projects.</description>
     <summary>Primary content is the CRMGridView user control inheriting DataGridView to use Microsoft.Xrm.Sdk.EntityCollection as a DataSource.</summary>
     <releaseNotes>
-Added metadata properties LogicalCollectionName, PrimaryIdAttribute, Targets
-- Thanks @MarkMpn Mark Carrington for the contribution!
+#14 Added parameters MajorVer and MinorVer to LoadEntityDetails, to remove LogicalCollectionName if version CRM 2015 or earlier.
     </releaseNotes>
     <copyright>Jonas Rapp</copyright>
     <language>es-US</language>
