@@ -42,6 +42,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.splitter1 = new System.Windows.Forms.Splitter();
+            this.button5 = new System.Windows.Forms.Button();
             this.crmGridView2 = new Cinteros.Xrm.CRMWinForm.CRMGridView();
             this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.revenue = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -49,7 +50,7 @@
             this.pcemail = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.calc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.crmGridView1 = new Cinteros.Xrm.CRMWinForm.CRMGridView();
-            this.button5 = new System.Windows.Forms.Button();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.crmGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.crmGridView1)).BeginInit();
@@ -57,6 +58,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.checkBox3);
             this.panel1.Controls.Add(this.button5);
             this.panel1.Controls.Add(this.button4);
             this.panel1.Controls.Add(this.button3);
@@ -192,6 +194,18 @@
             this.splitter1.TabIndex = 3;
             this.splitter1.TabStop = false;
             // 
+            // button5
+            // 
+            this.button5.Enabled = false;
+            this.button5.Location = new System.Drawing.Point(343, 16);
+            this.button5.Margin = new System.Windows.Forms.Padding(4);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(100, 28);
+            this.button5.TabIndex = 10;
+            this.button5.Text = "Plugin Trace";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.Button5_Click);
+            // 
             // crmGridView2
             // 
             this.crmGridView2.AllowUserToAddRows = false;
@@ -209,7 +223,7 @@
             this.crmGridView2.EnableHeadersVisualStyles = false;
             this.crmGridView2.FilterColumns = "";
             this.crmGridView2.Location = new System.Drawing.Point(0, 433);
-            this.crmGridView2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.crmGridView2.Margin = new System.Windows.Forms.Padding(4);
             this.crmGridView2.Name = "crmGridView2";
             this.crmGridView2.ReadOnly = true;
             this.crmGridView2.RowHeadersWidth = 51;
@@ -274,7 +288,7 @@
             this.crmGridView1.FilterColumns = "";
             this.crmGridView1.FilterText = "";
             this.crmGridView1.Location = new System.Drawing.Point(0, 123);
-            this.crmGridView1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.crmGridView1.Margin = new System.Windows.Forms.Padding(4);
             this.crmGridView1.Name = "crmGridView1";
             this.crmGridView1.ReadOnly = true;
             this.crmGridView1.RowHeadersWidth = 51;
@@ -282,17 +296,17 @@
             this.crmGridView1.TabIndex = 1;
             this.crmGridView1.RecordClick += new Cinteros.Xrm.CRMWinForm.CRMRecordEventHandler(this.crmGridView1_RecordClick);
             // 
-            // button5
+            // checkBox3
             // 
-            this.button5.Enabled = false;
-            this.button5.Location = new System.Drawing.Point(343, 16);
-            this.button5.Margin = new System.Windows.Forms.Padding(4);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(100, 28);
-            this.button5.TabIndex = 10;
-            this.button5.Text = "Plugin Trace";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.Button5_Click);
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Location = new System.Drawing.Point(764, 79);
+            this.checkBox3.Margin = new System.Windows.Forms.Padding(4);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(106, 21);
+            this.checkBox3.TabIndex = 11;
+            this.checkBox3.Text = "Local Times";
+            this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkBox3.CheckedChanged += new System.EventHandler(this.CheckBox3_CheckedChanged);
             // 
             // Form1
             // 
@@ -336,6 +350,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.CheckBox checkBox3;
     }
 }
 

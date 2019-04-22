@@ -38,9 +38,9 @@ namespace WinFormTest
         private void button2_Click(object sender, EventArgs e)
         {
             var qex = new QueryExpression("account");
-            qex.ColumnSet.AddColumns("name", "accountnumber", "primarycontactid", "accountratingcode", "numberofemployees", "revenue", "creditlimit");
+            qex.ColumnSet.AddColumns("name", "accountnumber", "primarycontactid", "accountratingcode", "numberofemployees", "revenue", "creditlimit", "modifiedon");
             var pc = qex.AddLink("contact", "primarycontactid", "contactid", JoinOperator.LeftOuter);
-            pc.Columns.AddColumn("emailaddress1");
+            pc.Columns.AddColumns("emailaddress1", "modifiedon");
             pc.EntityAlias = "C";
             var ec = crmGridView1.OrganizationService.RetrieveMultiple(qex);
             CalcSomeValue(ec);
@@ -118,20 +118,20 @@ namespace WinFormTest
             var QEplugintracelog = new QueryExpression(PluginTraceLog.EntityName);
             QEplugintracelog.TopCount = 50;
             QEplugintracelog.ColumnSet.AddColumns(
-                            //PluginTraceLog.CorrelationId,
-                            //PluginTraceLog.PerformanceExecutionStarttime,
-                            //PluginTraceLog.PerformanceConstructorStarttime,
-                            //PluginTraceLog.OperationType,
-                            //PluginTraceLog.MessageName,
-                            //PluginTraceLog.PrimaryKey,
-                            //PluginTraceLog.PrimaryEntity,
-                            //PluginTraceLog.ExceptionDetails,
-                            //PluginTraceLog.MessageBlock,
-                            //PluginTraceLog.PerformanceExecutionDuration,
-                            //PluginTraceLog.CreatedOn,
-                            //PluginTraceLog.Depth,
-                            //PluginTraceLog.Mode,
-                            //PluginTraceLog.RequestId,
+                            PluginTraceLog.CorrelationId,
+                            PluginTraceLog.PerformanceExecutionStarttime,
+                            PluginTraceLog.PerformanceConstructorStarttime,
+                            PluginTraceLog.OperationType,
+                            PluginTraceLog.MessageName,
+                            PluginTraceLog.PrimaryKey,
+                            PluginTraceLog.PrimaryEntity,
+                            PluginTraceLog.ExceptionDetails,
+                            PluginTraceLog.MessageBlock,
+                            PluginTraceLog.PerformanceExecutionDuration,
+                            PluginTraceLog.CreatedOn,
+                            PluginTraceLog.Depth,
+                            PluginTraceLog.Mode,
+                            PluginTraceLog.RequestId,
                             PluginTraceLog.PrimaryName);
             var LEstep = QEplugintracelog.AddLink(SdkMessageProcessingStep.EntityName, PluginTraceLog.PluginStepId, SdkMessageProcessingStep.PrimaryKey, JoinOperator.LeftOuter);
             LEstep.EntityAlias = "step";
@@ -142,6 +142,11 @@ namespace WinFormTest
             QEplugintracelog.AddOrder(PluginTraceLog.Depth, OrderType.Descending);           // This to try to compensate for executionstarttime only accurate to the second
             var ec = crmGridView1.OrganizationService.RetrieveMultiple(QEplugintracelog);
             crmGridView1.DataSource = ec;
+        }
+
+        private void CheckBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            crmGridView1.ShowLocalTimes = checkBox3.Checked;
         }
     }
 }
