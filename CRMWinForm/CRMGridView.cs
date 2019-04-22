@@ -635,9 +635,9 @@ namespace Cinteros.Xrm.CRMWinForm
                             value = entity[col];
                             if (showFriendlyNames)
                             {
-                                if (value is DateTime && showLocalTimes && ((DateTime)value).Kind == DateTimeKind.Utc)
+                                if (EntitySerializer.AttributeToBaseType(value) is DateTime dtvalue && showLocalTimes && (dtvalue).Kind == DateTimeKind.Utc)
                                 {
-                                    value = ((DateTime)value).ToLocalTime();
+                                    value = dtvalue.ToLocalTime();
                                 }
                                 if (!ValueTypeIsFriendly(value) && column.ExtendedProperties.ContainsKey("Metadata"))
                                 {
