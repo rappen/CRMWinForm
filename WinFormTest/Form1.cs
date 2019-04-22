@@ -1,16 +1,10 @@
 ﻿using Cinteros.Xrm.CRMWinForm;
+using Cinteros.XTB.PluginTraceViewer.Const;
 using McTools.Xrm.Connection;
 using McTools.Xrm.Connection.WinForms;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinFormTest
@@ -28,6 +22,7 @@ namespace WinFormTest
             crmGridView1.OrganizationService = e.OrganizationService;
             button2.Enabled = crmGridView1.OrganizationService != null;
             button4.Enabled = crmGridView1.OrganizationService != null;
+            button5.Enabled = crmGridView1.OrganizationService != null;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -116,6 +111,37 @@ namespace WinFormTest
             var ec = crmGridView1.OrganizationService.RetrieveMultiple(new FetchExpression(fetch));
             crmGridView1.DataSource = ec;
             crmGridView2.DataSource = ec;
+        }
+
+        private void Button5_Click(object sender, EventArgs e)
+        {
+            var QEplugintracelog = new QueryExpression(PluginTraceLog.EntityName);
+            QEplugintracelog.TopCount = 50;
+            QEplugintracelog.ColumnSet.AddColumns(
+                            //PluginTraceLog.CorrelationId,
+                            //PluginTraceLog.PerformanceExecutionStarttime,
+                            //PluginTraceLog.PerformanceConstructorStarttime,
+                            //PluginTraceLog.OperationType,
+                            //PluginTraceLog.MessageName,
+                            //PluginTraceLog.PrimaryKey,
+                            //PluginTraceLog.PrimaryEntity,
+                            //PluginTraceLog.ExceptionDetails,
+                            //PluginTraceLog.MessageBlock,
+                            //PluginTraceLog.PerformanceExecutionDuration,
+                            //PluginTraceLog.CreatedOn,
+                            //PluginTraceLog.Depth,
+                            //PluginTraceLog.Mode,
+                            //PluginTraceLog.RequestId,
+                            PluginTraceLog.PrimaryName);
+            var LEstep = QEplugintracelog.AddLink(SdkMessageProcessingStep.EntityName, PluginTraceLog.PluginStepId, SdkMessageProcessingStep.PrimaryKey, JoinOperator.LeftOuter);
+            LEstep.EntityAlias = "step";
+            LEstep.Columns.AddColumns(SdkMessageProcessingStep.PrimaryName, SdkMessageProcessingStep.Rank, SdkMessageProcessingStep.Stage);
+            //filterControl.GetQueryFilter(QEplugintracelog, refreshOnly);
+            QEplugintracelog.AddOrder(PluginTraceLog.PerformanceExecutionStarttime, OrderType.Descending);
+            QEplugintracelog.AddOrder(PluginTraceLog.CorrelationId, OrderType.Ascending);    // This just to group threads together when starting the same second
+            QEplugintracelog.AddOrder(PluginTraceLog.Depth, OrderType.Descending);           // This to try to compensate for executionstarttime only accurate to the second
+            var ec = crmGridView1.OrganizationService.RetrieveMultiple(QEplugintracelog);
+            crmGridView1.DataSource = ec;
         }
     }
 }
