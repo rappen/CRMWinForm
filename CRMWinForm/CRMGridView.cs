@@ -505,9 +505,22 @@ namespace Cinteros.Xrm.CRMWinForm
                 dataColumn.Caption = viewcol.HeaderText;
                 var meta = MetadataHelper.GetAttribute(organizationService, entities.EntityName, attribute, value);
                 dataColumn.ExtendedProperties.Add("Metadata", meta);
-                dataColumn.ExtendedProperties.Add("OriginalType", value != null ? value.GetType() : null);
+                dataColumn.ExtendedProperties.Add("OriginalType", GetInnerValueType(value));
+                if (!string.IsNullOrEmpty(viewcol.DefaultCellStyle.Format))
+                {
+                    dataColumn.ExtendedProperties.Add("Format", viewcol.DefaultCellStyle.Format);
+                }
                 columns.Add(dataColumn);
             }
+        }
+
+        private static Type GetInnerValueType(object value)
+        {
+            if (value is AliasedValue aliasedValue)
+            {
+                return GetInnerValueType(aliasedValue.Value);
+            }
+            return value != null ? value.GetType() : null;
         }
 
         private Type GetValueType(object value)
@@ -567,7 +580,11 @@ namespace Cinteros.Xrm.CRMWinForm
                         meta.DisplayName != null &&
                         meta.DisplayName.UserLocalizedLabel != null ? meta.DisplayName.UserLocalizedLabel.Label : attribute;
                     dataColumn.ExtendedProperties.Add("Metadata", meta);
-                    dataColumn.ExtendedProperties.Add("OriginalType", value.GetType());
+                    dataColumn.ExtendedProperties.Add("OriginalType", GetInnerValueType(value));
+                    if (meta is DateTimeAttributeMetadata && entities.Entities.Any(e => e.Contains(attribute) && e[attribute] is DateTime dtvalue && dtvalue.Millisecond > 0))
+                    {
+                        dataColumn.ExtendedProperties.Add("Format", "yyyy-MM-dd hh:mm:ss.fff");
+                    }
                     columns.Add(dataColumn);
                     addedColumns.Add(attribute);
                 }
@@ -624,7 +641,7 @@ namespace Cinteros.Xrm.CRMWinForm
                                 }
                                 if (!ValueTypeIsFriendly(value) && column.ExtendedProperties.ContainsKey("Metadata"))
                                 {
-                                    value = EntitySerializer.AttributeToString(value, column.ExtendedProperties["Metadata"] as AttributeMetadata);
+                                    value = EntitySerializer.AttributeToString(value, column.ExtendedProperties["Metadata"] as AttributeMetadata, column.ExtendedProperties["Format"] as string);
                                 }
                                 else
                                 {
@@ -685,9 +702,13 @@ namespace Cinteros.Xrm.CRMWinForm
                 {
                     type = datacolumn.ExtendedProperties["OriginalType"] as Type;
                 }
-                if (type == typeof(int) || type == typeof(decimal) || type == typeof(double) || type == typeof(Money))
+                if (type == typeof(int) || type == typeof(decimal) || type == typeof(double) || type == typeof(Money) || (type == typeof(OptionSetValue) && !showFriendlyNames))
                 {
                     col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                }
+                if (datacolumn.ExtendedProperties.ContainsKey("Format"))
+                {
+                    col.DefaultCellStyle.Format = datacolumn.ExtendedProperties["Format"] as string;
                 }
                 if (datacolumn.ColumnName == "#no")
                 {
