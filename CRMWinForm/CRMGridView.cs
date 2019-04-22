@@ -583,7 +583,7 @@ namespace Cinteros.Xrm.CRMWinForm
                     dataColumn.ExtendedProperties.Add("OriginalType", GetInnerValueType(value));
                     if (meta is DateTimeAttributeMetadata && entities.Entities.Any(e => e.Contains(attribute) && e[attribute] is DateTime dtvalue && dtvalue.Millisecond > 0))
                     {
-                        dataColumn.ExtendedProperties.Add("Format", "yyyy-MM-dd hh:mm:ss.fff");
+                        dataColumn.ExtendedProperties.Add("Format", "yyyy-MM-dd HH:mm:ss.fff");
                     }
                     columns.Add(dataColumn);
                     addedColumns.Add(attribute);
