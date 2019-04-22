@@ -574,11 +574,21 @@ namespace Cinteros.Xrm.CRMWinForm
                     var type = GetValueType(value);
                     var dataColumn = new DataColumn(attribute, type);
                     var meta = MetadataHelper.GetAttribute(organizationService, entities.EntityName, attribute, entity[attribute]);
-                    dataColumn.Caption =
-                        showFriendlyNames &&
-                        meta != null &&
-                        meta.DisplayName != null &&
-                        meta.DisplayName.UserLocalizedLabel != null ? meta.DisplayName.UserLocalizedLabel.Label : attribute;
+                    if (showFriendlyNames &&
+                       meta != null &&
+                       meta.DisplayName != null &&
+                       meta.DisplayName.UserLocalizedLabel != null)
+                    {
+                        dataColumn.Caption = meta.DisplayName.UserLocalizedLabel.Label;
+                        if (attribute.Contains("."))
+                        {
+                            dataColumn.Caption = attribute.Split('.')[0] + " " + dataColumn.Caption;
+                        }
+                    }
+                    else
+                    {
+                        dataColumn.Caption = attribute;
+                    }
                     dataColumn.ExtendedProperties.Add("Metadata", meta);
                     dataColumn.ExtendedProperties.Add("OriginalType", GetInnerValueType(value));
                     if (meta is DateTimeAttributeMetadata && entities.Entities.Any(e => e.Contains(attribute) && e[attribute] is DateTime dtvalue && dtvalue.Millisecond > 0))
