@@ -1,4 +1,12 @@
-# CRMWinForm
+# Discontinued project
+## Development has been moved to:
+## https://github.com/jamesnovak/xrmtb.XrmToolBox.Controls/
+
+
+---
+
+
+### CRMWinForm
 __Tools to develop WinForm applications for Microsoft Dynamics CRM.__
 
 Available on nuget: https://www.nuget.org/packages/Cinteros.Xrm.CRMWinForm/
